@@ -2,7 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import { 
-	ManageStories, ComposeStory, ManageTeachers
+	ManageStories, ComposeStory, ManageTeachers,
+	Login, Out, ManageSections, ManageSchoolYear
 } from '../views/index'
 
 Vue.use(VueRouter)
@@ -22,6 +23,26 @@ const routes = [
 		path: '/teachers',
 		name: 'ManageTeachers',
 		component: ManageTeachers
+	},
+	{
+		path: '/login',
+		name: 'Login',
+		component: Login
+	},
+	{
+		path: '/out',
+		name: 'Out',
+		component: Out
+	},
+	{
+		path: '/sections',
+		name: 'ManageSections',
+		component: ManageSections
+	},
+	{
+		path: '/schoolyear',
+		name: 'ManageSchoolYear',
+		component: ManageSchoolYear
 	}
 ]
 

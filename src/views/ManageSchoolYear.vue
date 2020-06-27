@@ -2,7 +2,7 @@
     <div>
         <el-row :span="24" class="page-header" type="flex" justify="center" align="center">
             <el-col :span="12" class="page-title">
-                <i class="el-icon-notebook-1"></i> Manage Teachers
+                <i class="el-icon-notebook-1"></i> Manage Schoolyear
             </el-col>
             <el-col :span="12" class="add-btn">
                 <el-tooltip class="item" effect="dark" content="Add Teacher" placement="left">
@@ -11,26 +11,18 @@
             </el-col>
         </el-row>
         <el-row :span="24" class="page-content">
-            <TeachersTBL ref="teacherTable"/>
+            <SchoolYearTBL ref="teacherTable"/>
         </el-row>
 
-        <el-dialog title="Create Teacher Account" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+        <el-dialog title="New Section" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
             <el-form ref="addTeacherForm" :model="form" :rules="rules">
 
-                <el-form-item label="Firstname" :label-width="formLabelWidth" prop="fname">
-                    <el-input v-model="form.fname"></el-input>
+                <el-form-item label="Section name" :label-width="formLabelWidth" prop="section_name">
+                    <el-input v-model="form.section_name"></el-input>
                 </el-form-item>
 
-                <el-form-item label="Lastname" :label-width="formLabelWidth" prop="lname">
-                    <el-input v-model="form.lname"></el-input>
-                </el-form-item>
-
-                <el-form-item label="username" :label-width="formLabelWidth" prop="username">
-                    <el-input v-model="form.username"></el-input>
-                </el-form-item>
-
-                <el-form-item label="password" :label-width="formLabelWidth" prop="password">
-                    <el-input v-model="form.password" type="password"></el-input>
+                <el-form-item label="Year level" :label-width="formLabelWidth" prop="yr_level">
+                    <el-input v-model="form.yr_level" type="number"></el-input>
                 </el-form-item>
 
             </el-form>
@@ -43,43 +35,31 @@
     </div>
 </template>
 <script>
-import TeachersTBL from '../components/TeachersTBL.vue'
+import SchoolYearTBL from '../components/SchoolYearTBL.vue'
 import { Message } from 'element-ui'
 import API from '../API'
 
 export default{
     components:{
-        TeachersTBL
+        SchoolYearTBL
     },
     data(){
         return{
             dialogFormVisible: false,
             formLabelWidth: '120px',
             form: {
-                lname: "",
-                fname: "",
-                username: "",
-                password: ""
+                section_name: "",
+                yr_level: ""
             },
             rules:{
-                lname:[
+                section_name:[
                     {
-                        required: true, message: 'Firstname is required', trigger: 'change'
+                        required: true, message: "Section name is required", trigger: 'change'
                     }
                 ],
-                fname:[
+                yr_level:[
                     {
-                        required: true, message: 'Lastname is required', trigger: 'change'
-                    }
-                ],
-                username:[
-                    {
-                        required: true, message: 'Username is required', trigger: 'change'
-                    }
-                ],
-                password:[
-                    {
-                        required: true, message: 'Password is required', trigger: 'change'
+                        required: true, message: "Year level is required", trigger: 'change'
                     }
                 ]
             },
@@ -106,13 +86,10 @@ export default{
             let self = this
 
             let payload = {
-                fname: self.form.fname,
-                lname: self.form.lname,
-                username: self.form.username,
-                password: self.form.password
+                ...self.form
             }
 
-            const { data, status } = await API.addTeacher(payload)
+            const { data, status } = await API.addSection(payload)
             this.loading = false
 
             if(data.ok == true){

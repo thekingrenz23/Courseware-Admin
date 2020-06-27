@@ -1,24 +1,35 @@
 <template>
 <div>
 <el-table
-    :data="tableData.filter(data => !search || (data.fname+' '+data.lname).toLowerCase().includes(search.toLowerCase()))"
+    :data="tableData.filter(data => !search || data.section_name.toLowerCase().includes(search.toLowerCase()))"
     style="width: 100%"
     v-loading="loadingContent">
     
     <el-table-column
-        label="Name"
+        label="School Year"
         width="180">
 
         <template slot-scope="scope">
-            <i class="el-icon-user"></i>
-            <span style="margin-left: 10px">{{ scope.row.fname }} {{ scope.row.lname }}</span>
+            <i class="el-icon-school"></i>
+            <span style="margin-left: 10px">{{ scope.row.sy }}</span>
         </template>
 
     </el-table-column>
 
     <el-table-column
-        label="Username"
-        prop="username">
+        prop="active"
+        label="Status"
+        width="100"
+        :filters="[{ text: 'Active', value: '1' }, { text: 'Deactivated', value: '0' }]"
+        :filter-method="filterTag"
+        filter-placement="bottom-end">
+
+        <template slot-scope="scope">
+            <el-tag
+            :type="scope.row.active === 'Active' ? 'primary' : 'success'"
+            disable-transitions>{{scope.row.tag}}</el-tag>
+        </template>
+
     </el-table-column>
 
     <el-table-column
@@ -27,7 +38,7 @@
         <template slot="header" slot-scope="scope">
             <el-input
                 v-model="search"
-                placeholder="Search name"/>
+                placeholder="Search section name"/>
         </template>
 
         <template slot-scope="scope">
@@ -44,23 +55,15 @@
         </template>
     </el-table-column>
 </el-table>
-<el-dialog title="Edit teacher" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+<el-dialog title="Edit Section" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
     <el-form ref="editTeacherForm" :model="form" :rules="rules">
 
-        <el-form-item label="Firstname" :label-width="formLabelWidth" prop="fname">
-            <el-input v-model="form.fname"></el-input>
+        <el-form-item label="Section name" :label-width="formLabelWidth" prop="section_name">
+            <el-input v-model="form.section_name"></el-input>
         </el-form-item>
 
-        <el-form-item label="Lastname" :label-width="formLabelWidth" prop="lname">
-            <el-input v-model="form.lname"></el-input>
-        </el-form-item>
-
-        <el-form-item label="username" :label-width="formLabelWidth" prop="username"> 
-            <el-input v-model="form.username" disabled></el-input>
-        </el-form-item>
-
-        <el-form-item label="password" :label-width="formLabelWidth" prop="password">
-            <el-input v-model="form.password" type="password"></el-input>
+        <el-form-item label="Year level" :label-width="formLabelWidth" prop="yr_level">
+            <el-input v-model="form.yr_level" type="number"></el-input>
         </el-form-item>
 
     </el-form>
@@ -86,31 +89,19 @@ export default {
             dialogFormVisible: false,
             formLabelWidth: '120px',
             form: {
-                lname: "",
-                fname: "",
-                username: "",
-                password: "",
-                teacher_id: ""
+                section_name: "",
+                yr_level: "",
+                section_id: ""
             },
             rules:{
-                lname:[
+                section_name:[
                     {
-                        required: true, message: 'Firstname is required', trigger: 'change'
+                        required: true, message: "Section name is required", trigger: 'change'
                     }
                 ],
-                fname:[
+                yr_level:[
                     {
-                        required: true, message: 'Lastname is required', trigger: 'change'
-                    }
-                ],
-                username:[
-                    {
-                        required: true, message: 'Username is required', trigger: 'change'
-                    }
-                ],
-                password:[
-                    {
-                        required: true, message: 'Password is required', trigger: 'change'
+                        required: true, message: "Year level is required", trigger: 'change'
                     }
                 ]
             },
@@ -124,10 +115,13 @@ export default {
             this.form = { ...row }
             this.dialogFormVisible = true
         },
+        filterTag(value, row) {
+            return row.tag === value;
+        },
         handleDelete(index, row) {
             this.form = { ...row }
 
-            this.$confirm("This will permanently delete the account. Continue?", 'Warning',{
+            this.$confirm("This will permanently delete this section. Continue?", 'Warning',{
                 confirmButtonText: 'yes',
                 cancelButtonText: 'Cancel',
                 type:'warning'
@@ -146,7 +140,7 @@ export default {
             let self = this
 
             this.loadingContent = true
-            const { data, status } = await API.getTeachers()
+            const { data, status } = await API.getSy()
             this.loadingContent = false
 
             if(data.ok == true){
@@ -172,13 +166,10 @@ export default {
             let self = this
 
             let payload = {
-                fname: self.form.fname,
-                lname: self.form.lname,
-                password: self.form.password,
-                teacher_id: self.form.teacher_id
+                ...self.form
             }
 
-            const { data, status } = await API.updateTeacher(payload)
+            const { data, status } = await API.updateSection(payload)
             this.loading = false
 
             if(data.ok == true){
@@ -191,10 +182,10 @@ export default {
         },
         async deleteTeacher(){
             let payload = {
-                teacher_id: this.form.teacher_id
+                section_id: this.form.section_id
             }
 
-            const { data, status } = await API.deleteTeacher(payload)
+            const { data, status } = await API.deleteSection(payload)
 
             if(data.ok == true){
                 this.$message({

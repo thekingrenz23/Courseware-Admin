@@ -11,7 +11,7 @@
         <div class="sidebar-avatar">
         	<el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" ></el-avatar>
           	<p style="margin-left: 20px">
-				Renz Carlo Salanga
+				{{ getUserData.name }}
           	</p>
         </div>
 
@@ -25,12 +25,22 @@
             <span>Manage Stories</span>
         </el-menu-item>
 
-		    <el-menu-item index="/teachers">
+		<el-menu-item index="/teachers">
             <i class="el-icon-user"></i>
             <span>Manage Teachers</span>
         </el-menu-item>
 
-        <el-menu-item index="3">
+        <el-menu-item index="/sections">
+            <i class="el-icon-set-up"></i>
+            <span>Manage Sections</span>
+        </el-menu-item>
+
+        <el-menu-item index="/schoolyear">
+            <i class="el-icon-school"></i>
+            <span>Manage School year</span>
+        </el-menu-item>
+
+        <el-menu-item index="/out">
             <i class="el-icon-download"></i>
             <span>Logout</span>
         </el-menu-item>
@@ -40,6 +50,11 @@
 </template>
 <script>
 export default {
+    computed:{
+        getUserData(){
+            return this.$store.getters.getUserData
+        }
+    },
     methods: {
       	handleOpen(key, keyPath) {
         	console.log(key, keyPath);

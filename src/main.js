@@ -9,8 +9,18 @@ Vue.use(wysiwyg, {maxHeight: "500px", hideModules: { image: false } })
 
 Vue.config.productionTip = false
 
+router.beforeEach((to, from, next) => {
+	if(to.path != '/login'){
+		if (!store.getters.logged) next('/login')
+		else next()
+	}else{
+		if (store.getters.logged) next('/')
+	  	else next()
+	}
+})
+
 new Vue({
-  router,
-  store,
-  render: h => h(App)
+  	router,
+  	store,
+  	render: h => h(App)
 }).$mount('#app')

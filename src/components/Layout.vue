@@ -1,17 +1,17 @@
 <template>
 <el-container>
 
-	<el-aside>
+	<el-aside v-if="verified">
 		<Sidebar/>
 	</el-aside>	
   
   	<el-container>
 
-    	<el-header>
+    	<el-header v-if="verified">
 			<Header/>
     	</el-header>
     
-		<el-main>
+		<el-main v-bind:class="{ 'main-view': verified, 'login-view': !verified }">
 			<router-view key="$router.fullPath"></router-view>
 		</el-main>
 
@@ -38,9 +38,13 @@
 		z-index: 10;
 	}
 	  
-	.el-main{
+	.main-view{
 		margin-top: 61px;
 		margin-left: 300px;
+		padding: 0 !important;
+	}
+
+	.login-view{
 		padding: 0 !important;
 	}
 </style>
@@ -53,6 +57,11 @@
 		components: {
 			Header,
 			Sidebar
+		},
+		computed: {
+			verified(){
+				return this.$store.getters.logged
+			}
 		},
     	data() {
       		const item = {
